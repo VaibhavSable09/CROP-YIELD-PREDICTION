@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-success text-white">
+                <h2 class="text-center mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>Prediction Results
+                </h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="prediction-result text-center mb-4">
+                            <h3 class="text-success">Estimated Yield</h3>
+                            <div class="display-4 mb-2">{{ prediction.yield }} tons/ha</div>
+                            <div class="text-muted">
+                                Confidence: {{ "%.2f"|format(prediction.confidence) }}%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="crop-info">
+                            <h3 class="text-success">Crop Information</h3>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <i class="fas fa-thermometer-half me-2 text-primary"></i>
+                                    Optimal Temperature: {{ crop_info.optimal_temp }}°C
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-mountain me-2 text-success"></i>
+                                    Soil Type: {{ crop_info.soil_type }}
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-calendar me-2 text-warning"></i>
+                                    Growing Season: {{ crop_info.growing_season }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0"><i class="fas fa-flask me-2"></i>Fertilizer Recommendations</h3>
+                    </div>
+                    <div class="card-body">
+                        <h4>{{ fertilizer_info.name }}</h4>
+                        <p class="mb-0">
+                            <i class="fas fa-spray-can me-2 text-primary"></i>
+                            Application: {{ fertilizer_info.method }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h3 class="mb-0"><i class="fas fa-bug me-2"></i>Pest Control</h3>
+                    </div>
+                    <div class="card-body">
+                        <h4>Common Pest: {{ pesticide_info.pest }}</h4>
+                        <p>Recommended: {{ pesticide_info.name }}</p>
+                        <p class="mb-0">
+                            <i class="fas fa-spray-can me-2 text-warning"></i>
+                            Application: {{ pesticide_info.method }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="/predict" class="btn btn-success btn-lg">
+                <i class="fas fa-redo me-2"></i>Make Another Prediction
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="prediction-container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h2 class="text-center mb-4">Crop Yield Prediction</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('predict') }}" id="predictionForm">
+                        <div class="row g-4">
+                            <!-- Crop and Region Selection -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Select Crop</label>
+                                <select name="crop" class="form-select form-select-lg" required>
+                                    <option value="">Choose a crop</option>
+                                    {% for crop in ['Wheat', 'Rice', 'Maize', 'Barley', 'Millets', 'Cotton', 'Sugarcane', 
+                                                  'Pulses', 'Soybean', 'Groundnut', 'Mustard', 'Sunflower', 'Jute', 
+                                                  'Tobacco', 'Banana', 'Tomato', 'Potato', 'Onion', 'Garlic', 'Carrot',
+                                                  'Peas', 'Cabbage', 'Brinjal', 'Chili', 'Mango', 'Guava', 'Apple',
+                                                  'Orange', 'Pomegranate', 'Papaya'] %}
+                                        <option value="{{ crop }}">{{ crop }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Select District</label>
+                                <select name="region" class="form-select form-select-lg" required>
+                                    <option value="">Choose a district</option>
+                                    {% for district in ['Pune', 'Nashik', 'Nagpur', 'Aurangabad', 'Solapur',
+                                                      'Amravati', 'Kolhapur', 'Latur', 'Jalgaon', 'Satara'] %}
+                                        <option value="{{ district }}">{{ district }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Soil Parameters -->
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-2 mb-3">Soil Parameters</h5>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Soil pH</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-flask"></i></span>
+                                    <input type="number" name="soil_ph" class="form-control form-control-lg" 
+                                           step="0.1" min="0" max="14" required>
+                                </div>
+                                <div class="form-text">Range: 0-14</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Nitrogen (N)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">N</span>
+                                    <input type="number" name="nitrogen" class="form-control form-control-lg" 
+                                           min="0" required>
+                                </div>
+                                <div class="form-text">kg/ha</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Phosphorus (P)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">P</span>
+                                    <input type="number" name="phosphorus" class="form-control form-control-lg" 
+                                           min="0" required>
+                                </div>
+                                <div class="form-text">kg/ha</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Potassium (K)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">K</span>
+                                    <input type="number" name="potassium" class="form-control form-control-lg" 
+                                           min="0" required>
+                                </div>
+                                <div class="form-text">kg/ha</div>
+                            </div>
+
+                            <!-- Environmental Parameters -->
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-2 mb-3">Environmental Parameters</h5>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Temperature</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-temperature-high"></i></span>
+                                    <input type="number" name="temperature" class="form-control form-control-lg" 
+                                           step="0.1" required>
+                                </div>
+                                <div class="form-text">°C</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Humidity</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-tint"></i></span>
+                                    <input type="number" name="humidity" class="form-control form-control-lg" 
+                                           min="0" max="100" required>
+                                </div>
+                                <div class="form-text">%</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Rainfall</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-cloud-rain"></i></span>
+                                    <input type="number" name="rainfall" class="form-control form-control-lg" 
+                                           min="0" step="0.1" required>
+                                </div>
+                                <div class="form-text">mm/year</div>
+                            </div>
+
+                            <div class="col-12 text-center mt-4">
+                                <button type="submit" class="btn btn-success btn-lg px-5">
+                                    <i class="fas fa-calculator me-2"></i>Calculate Yield
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if predictions %}
+            <div class="prediction-history mt-5">
+                <h3><i class="fas fa-history me-2"></i>Recent Predictions</h3>
+                {% for prediction in predictions %}
+                <div class="history-item">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="mb-2">{{ prediction.crop }} ({{ prediction.region }})</h5>
+                            <p class="mb-1"><strong>Predicted Yield:</strong> {{ "%.2f"|format(prediction.predicted_yield) }} tons/ha</p>
+                            <p class="text-muted mb-0">{{ prediction.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Soil pH:</strong> {{ prediction.soil_ph }}</p>
+                            <p class="mb-1"><strong>NPK:</strong> {{ prediction.nitrogen }}-{{ prediction.phosphorus }}-{{ prediction.potassium }}</p>
+                            <p class="mb-0"><strong>Weather:</strong> {{ prediction.temperature }}°C, {{ prediction.humidity }}%, {{ prediction.rainfall }}mm</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
